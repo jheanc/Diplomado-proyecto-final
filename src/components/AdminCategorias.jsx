@@ -22,6 +22,7 @@ export default function AdminCategorias() {
     await addDoc(collection(db, 'categorias'), nuevaCategoria)
     setNuevaCategoria({ nombre: '', descripcion: '' })
     cargarCategorias()
+    window.dispatchEvent(new Event('categoriasActualizadas'))
   }
 
   const actualizarCategoria = async (e) => {
@@ -29,11 +30,13 @@ export default function AdminCategorias() {
     await updateDoc(doc(db, 'categorias', editando.id), editando)
     setEditando(null)
     cargarCategorias()
+    window.dispatchEvent(new Event('categoriasActualizadas'))
   }
 
   const eliminarCategoria = async (id) => {
     await deleteDoc(doc(db, 'categorias', id))
     cargarCategorias()
+    window.dispatchEvent(new Event('categoriasActualizadas'))
   }
 
   return (
@@ -54,7 +57,7 @@ export default function AdminCategorias() {
           className="form-control mb-2"
         />
         <button type="submit" className="btn btn-primary">{editando ? 'Actualizar' : 'Agregar'} Categoría</button>
-        {editando && <button onClick={() => setEditando(null)} className="btn btn-secondary ml-2">Cancelar</button>}
+        {editando && <button onClick={() => setEditando(null)} className="btn btn-secondary ms-2">Cancelar</button>}
       </form>
       <table className="table">
         <thead>

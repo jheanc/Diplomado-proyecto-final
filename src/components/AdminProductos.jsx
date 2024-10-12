@@ -12,28 +12,47 @@ export default function AdminProductos() {
   }, [])
 
   const cargarProductos = async () => {
-    const productosSnapshot = await getDocs(collection(db, 'productos'))
-    const productosLista = productosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    setProductos(productosLista)
+    try {
+      const productosSnapshot = await getDocs(collection(db, 'productos'))
+      const productosLista = productosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      setProductos(productosLista)
+    } catch (error) {
+      console.error("Error al cargar productos:", error)
+    }
   }
 
   const agregarProducto = async (e) => {
     e.preventDefault()
-    await addDoc(collection(db, 'productos'), nuevoProducto)
-    setNuevoProducto({ nombre: '', precio: '', descripcion: '', categoria: '' })
-    cargarProductos()
+    try {
+      await addDoc(collection(db, 'productos'), nuevoProducto)
+      setNuevoProducto({ nombre: '', precio: '', descripcion: '', categoria: '' })
+      cargarProductos()
+      window.dispatchEvent(new Event('productosActualizados'))
+    } catch (error) {
+      console.error("Error al agregar producto:", error)
+    }
   }
 
   const actualizarProducto = async (e) => {
     e.preventDefault()
-    await updateDoc(doc(db, 'productos', editando.id), editando)
-    setEditando(null)
-    cargarProductos()
+    try {
+      await updateDoc(doc(db, 'productos', editando.id), editando)
+      setEditando(null)
+      cargarProductos()
+      window.dispatchEvent(new Event('productosActualizados'))
+    } catch (error) {
+      console.error("Error al actualizar producto:", error)
+    }
   }
 
   const eliminarProducto = async (id) => {
-    await deleteDoc(doc(db, 'productos', id))
-    cargarProductos()
+    try {
+      await deleteDoc(doc(db, 'productos', id))
+      cargarProductos()
+      window.dispatchEvent(new Event('productosActualizados'))
+    } catch (error) {
+      console.error("Error al eliminar producto:", error)
+    }
   }
 
   return (
@@ -46,6 +65,7 @@ export default function AdminProductos() {
           value={editando ? editando.nombre : nuevoProducto.nombre}
           onChange={(e) => editando ? setEditando({...editando, nombre: e.target.value}) : setNuevoProducto({...nuevoProducto, nombre: e.target.value})}
           className="form-control mb-2"
+          required
         />
         <input
           type="number"
@@ -53,12 +73,14 @@ export default function AdminProductos() {
           value={editando ? editando.precio : nuevoProducto.precio}
           onChange={(e) => editando ? setEditando({...editando, precio: e.target.value}) : setNuevoProducto({...nuevoProducto, precio: e.target.value})}
           className="form-control mb-2"
+          required
         />
         <textarea
           placeholder="Descripción"
           value={editando ? editando.descripcion : nuevoProducto.descripcion}
           onChange={(e) => editando ? setEditando({...editando, descripcion: e.target.value}) : setNuevoProducto({...nuevoProducto, descripcion: e.target.value})}
           className="form-control mb-2"
+          required
         />
         <input
           type="text"
@@ -66,9 +88,10 @@ export default function AdminProductos() {
           value={editando ? editando.categoria : nuevoProducto.categoria}
           onChange={(e) => editando ? setEditando({...editando, categoria: e.target.value}) : setNuevoProducto({...nuevoProducto, categoria: e.target.value})}
           className="form-control mb-2"
+          required
         />
         <button type="submit" className="btn btn-primary">{editando ? 'Actualizar' : 'Agregar'} Producto</button>
-        {editando && <button onClick={() => setEditando(null)} className="btn btn-secondary ml-2">Cancelar</button>}
+        {editando && <button onClick={() => setEditando(null)} className="btn btn-secondary ms-2">Cancelar</button>}
       </form>
       <table className="table">
         <thead>
