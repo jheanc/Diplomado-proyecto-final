@@ -25,9 +25,7 @@ const Checkout = ({ cart, total }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para procesar el pago y la orden
     console.log('Datos del formulario:', formData);
-    // Luego, redirigir a una página de confirmación o mostrar un mensaje de éxito
   };
 
   return (

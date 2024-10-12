@@ -1,7 +1,6 @@
 // firebaseConfig.js
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; // Importar autenticación de Firebase
-
+import { getAuth } from "firebase/auth"; 
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAJHsB23lDM-AiBfbWAwX9CcsUXlyydIco",
@@ -14,6 +13,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app); // Inicializar autenticación
+const auth = getAuth(app); 
 
-export { auth }; // Exportar autenticación para usarla en otros archivos
+export { auth }; 

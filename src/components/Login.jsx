@@ -18,13 +18,11 @@ const Login = ({ setIsLoggedIn, setUserData }) => {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         setIsLoggedIn(true);
-        // Aquí deberías obtener los datos adicionales del usuario desde tu base de datos
-        // Por ahora, simularemos algunos datos
         setUserData({
           email: userCredential.user.email,
-          nombres: "Nombre", // Reemplazar con datos reales
-          apellidos: "Apellido", // Reemplazar con datos reales
-          sexo: "No especificado" // Reemplazar con datos reales
+          nombres: "Nombre",
+          apellidos: "Apellido", 
+          sexo: "No especificado" 
         });
         navigate('/quienessomos');
       } catch (error) {

@@ -28,7 +28,6 @@ const Quienessomos = ({ isLoggedIn, agregarProductoCarrito }) => {
       setProductos(data);
       setProductosFiltrados(data);
       
-      // Obtener categorías únicas
       const categoriasUnicas = [...new Set(data.map(producto => producto.category))];
       setCategorias(categoriasUnicas);
       

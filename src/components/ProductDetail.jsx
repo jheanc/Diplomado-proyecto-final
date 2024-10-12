@@ -19,10 +19,10 @@ const ProductDetail = ({ isLoggedIn, agregarProductoCarrito }) => {
           throw new Error('No se pudo obtener el producto');
         }
         const data = await response.json();
-        // Simulamos opciones para el producto
+       
         data.options = ['Pequeño', 'Mediano', 'Grande'];
         setProducto(data);
-        // Inicializar la variante con la primera opción si existe
+       
         if (data.options && data.options.length > 0) {
           setVariante(data.options[0]);
         }
@@ -79,9 +79,7 @@ const ProductDetail = ({ isLoggedIn, agregarProductoCarrito }) => {
             <p className="h3">${producto.price.toFixed(2)}</p>
           )}
           
-          {/* Opciones de compra */}
           <div className="mt-4">
-            {/* Selector de cantidad */}
             <div className="d-flex align-items-center mb-3">
               <button className="btn btn-outline-secondary" onClick={decrementarCantidad}>
                 <FontAwesomeIcon icon={faMinus} />
@@ -92,7 +90,6 @@ const ProductDetail = ({ isLoggedIn, agregarProductoCarrito }) => {
               </button>
             </div>
 
-            {/* Selector de variante */}
             {producto.options && producto.options.length > 0 && (
               <div className="mb-3">
                 <label htmlFor="variante" className="form-label">Variante:</label>
@@ -109,7 +106,6 @@ const ProductDetail = ({ isLoggedIn, agregarProductoCarrito }) => {
               </div>
             )}
 
-            {/* Botón de agregar al carrito */}
             <button 
               onClick={handleAddToCart} 
               className="btn btn-primary btn-lg mt-3"
