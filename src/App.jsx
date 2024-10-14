@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShoppingCart, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faShoppingCart, faUser, faBars } from '@fortawesome/free-solid-svg-icons'
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
 import { doc, getDoc } from "firebase/firestore"
 import { db, cargarCarrito, guardarCarrito } from './firebase'
@@ -18,6 +18,7 @@ import AdminPanel from './components/AdminPanel'
 import AdminProductos from './components/AdminProductos'
 import AdminCategorias from './components/AdminCategorias'
 import AdminPedidos from './components/AdminPedidos'
+import Notification from './components/Notification'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -25,9 +26,9 @@ function App() {
   const [productosCarrito, setProductosCarrito] = useState([])
   const [userData, setUserData] = useState(null)
   const [cuponAplicado, setCuponAplicado] = useState(null)
-  const auth = 
-
- getAuth()
+  const [notification, setNotification] = useState(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const auth = getAuth()
 
   const cupones = {
     'DESCUENTO5': 0.05,
@@ -100,6 +101,8 @@ function App() {
       }
       await guardarCarrito(userData.uid, nuevosProductos)
       setProductosCarrito(nuevosProductos)
+      
+      setNotification(`${producto.title} agregado al carrito`)
     } catch (error) {
       console.error("Error al agregar producto al carrito:", error)
     }
@@ -147,31 +150,54 @@ function App() {
     return total
   }
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
   return (
     <Router>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div className="container">
           <Link to="/" className="navbar-brand">Mi Tienda</Link>
-          <div className="navbar-nav">
-            <Link to="/" className="nav-link">Inicio</Link>
-            <Link to="/quienessomos" className="nav-link">Productos</Link>
-            {!isLoggedIn ? (
-              <Link to="/login" className="nav-link">Iniciar Sesión</Link>
-            ) : (
-              <>
-                <Link to="/carrito" className="nav-link">
-                  Carrito <FontAwesomeIcon icon={faShoppingCart} />
-                  <span className="badge bg-secondary">{productosCarrito.length}</span>
-                </Link>
-                <Link to="/perfil" className="nav-link">
-                  <FontAwesomeIcon icon={faUser} />
-                </Link>
-                {isAdmin && (
-                  <Link to="/admin" className="nav-link">Admin</Link>
-                )}
-                <button onClick={handleLogout} className="btn btn-link nav-link">Cerrar Sesión</button>
-              </>
-            )}
+          <button className="navbar-toggler" type="button" onClick={toggleMenu}>
+            <FontAwesomeIcon icon={faBars} />
+          </button>
+          <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`}>
+            <ul className="navbar-nav ms-auto">
+              <li className="nav-item">
+                <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)}>Inicio</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/quienessomos" className="nav-link" onClick={() => setIsMenuOpen(false)}>Productos</Link>
+              </li>
+              {!isLoggedIn ? (
+                <li className="nav-item">
+                  <Link to="/login" className="nav-link" onClick={() => setIsMenuOpen(false)}>Iniciar Sesión</Link>
+                </li>
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <Link to="/carrito" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      Carrito <FontAwesomeIcon icon={faShoppingCart} />
+                      <span className="badge bg-secondary">{productosCarrito.length}</span>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/perfil" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      <FontAwesomeIcon icon={faUser} />
+                    </Link>
+                  </li>
+                  {isAdmin && (
+                    <li className="nav-item">
+                      <Link to="/admin" className="nav-link" onClick={() => setIsMenuOpen(false)}>Admin</Link>
+                    </li>
+                  )}
+                  <li className="nav-item">
+                    <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="btn btn-link nav-link">Cerrar Sesión</button>
+                  </li>
+                </>
+              )}
+            </ul>
           </div>
         </div>
       </nav>
@@ -195,7 +221,11 @@ function App() {
         } />
         <Route path="/checkout" element={
           <RutaProtegida isLoggedIn={isLoggedIn}>
-            <Checkout />
+            <Checkout 
+              productos={productosCarrito}
+              cuponAplicado={cuponAplicado}
+              calcularTotalConDescuento={calcularTotalConDescuento}
+            />
           </RutaProtegida>
         } />
         <Route path="/perfil" element={
@@ -225,6 +255,13 @@ function App() {
           </RutaProtegida>
         } />
       </Routes>
+      
+      {notification && (
+        <Notification
+          message={notification}
+          onClose={() => setNotification(null)}
+        />
+      )}
     </Router>
   )
 }

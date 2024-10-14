@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faPhone, faHome, faCreditCard, faLock, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
-const Checkout = ({ cart, total }) => {
+const Checkout = ({ productos, cuponAplicado, calcularTotalConDescuento }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -26,7 +26,15 @@ const Checkout = ({ cart, total }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Datos del formulario:', formData);
+    // Aquí iría la lógica para procesar el pago y crear el pedido
   };
+
+  const calcularSubtotal = () => {
+    return productos.reduce((total, producto) => total + producto.price * producto.cantidad, 0);
+  };
+
+  const subtotal = calcularSubtotal();
+  const total = calcularTotalConDescuento(subtotal);
 
   return (
     <div className="container mt-5">
@@ -76,6 +84,7 @@ const Checkout = ({ cart, total }) => {
                     Teléfono
                   </label>
                   <input
+                    
                     type="tel"
                     className="form-control"
                     id="telefono"
@@ -184,16 +193,26 @@ const Checkout = ({ cart, total }) => {
           <div className="card shadow">
             <div className="card-body">
               <h3 className="card-title mb-4">Resumen del Pedido</h3>
-              {cart && cart.length > 0 ? (
+              {productos && productos.length > 0 ? (
                 <>
-                  {cart.map((item, index) => (
-                    <div key={index} className="d-flex justify-content-between mb-2">
-                      <span>{item.name}</span>
-                      <span>${item.price.toFixed(2)}</span>
+                  {productos.map((producto) => (
+                    <div key={producto.id} className="d-flex justify-content-between mb-2">
+                      <span>{producto.title} (x{producto.cantidad})</span>
+                      <span>${(producto.price * producto.cantidad).toFixed(2)}</span>
                     </div>
                   ))}
                   <hr />
                   <div className="d-flex justify-content-between">
+                    <strong>Subtotal:</strong>
+                    <strong>${subtotal.toFixed(2)}</strong>
+                  </div>
+                  {cuponAplicado && (
+                    <div className="d-flex justify-content-between text-success">
+                      <span>Descuento ({cuponAplicado.codigo}):</span>
+                      <span>-${(subtotal * cuponAplicado.descuento).toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="d-flex justify-content-between mt-2">
                     <strong>Total:</strong>
                     <strong>${total.toFixed(2)}</strong>
                   </div>
