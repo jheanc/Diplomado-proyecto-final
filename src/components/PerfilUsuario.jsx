@@ -84,9 +84,11 @@ const PerfilUsuario = ({ userData }) => {
                   <div className="mb-3">
                     <strong>Rol:</strong> {perfil.rol || 'No especificado'}
                   </div>
-                  <button className="btn btn-primary" onClick={() => setEditando(true)}>
-                    Editar Perfil
-                  </button>
+                  <div className="text-center">
+                    <button className="btn btn-primary w-50" onClick={() => setEditando(true)}>
+                      Editar Perfil
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
@@ -116,8 +118,10 @@ const PerfilUsuario = ({ userData }) => {
                       <option value="otro">Otro</option>
                     </select>
                   </div>
-                  <button type="submit" className="btn btn-primary me-2">Guardar Cambios</button>
-                  <button type="button" className="btn btn-secondary" onClick={() => setEditando(false)}>Cancelar</button>
+                  <div className="text-center">
+                    <button type="submit" className="btn btn-primary me-2">Guardar Cambios</button>
+                    <button type="button" className="btn btn-secondary" onClick={() => setEditando(false)}>Cancelar</button>
+                  </div>
                 </form>
               )}
             </div>
