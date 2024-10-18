@@ -90,7 +90,10 @@ function App() {
   }
 
   const agregarProductoCarrito = async (producto) => {
-    if (!isLoggedIn || !userData) return
+    if (!isLoggedIn || !userData) {
+      setNotification("Por favor, inicia sesión para agregar productos al carrito");
+      return;
+    }
     try {
       const nuevosProductos = [...productosCarrito]
       const productoExistente = nuevosProductos.find((p) => p.id === producto.id)
@@ -105,6 +108,7 @@ function App() {
       setNotification(`${producto.title} agregado al carrito`)
     } catch (error) {
       console.error("Error al agregar producto al carrito:", error)
+      setNotification("Error al agregar el producto al carrito")
     }
   }
 
@@ -254,6 +258,7 @@ function App() {
             <AdminPedidos />
           </RutaProtegida>
         } />
+      
       </Routes>
       
       {notification && (
